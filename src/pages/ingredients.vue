@@ -1,7 +1,7 @@
 <template>
   <Header />
   <div class="background">
-    <Dashboard />
+    <Ingredient />
   </div>
 </template>
 

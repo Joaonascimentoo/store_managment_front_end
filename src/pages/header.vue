@@ -1,13 +1,11 @@
 <template>
-  <Header />
   <div class="background">
-    <Dashboard />
+    <Header />
   </div>
 </template>
-
-<style lang='scss'>
+<style scoped>
 .background {
-  background-image: url('@/assets/background.jpg');
+  background-image: url("@/assets/background.jpg");
   background-size: cover;
   background-position: center;
   height: 100vh; /* Define a altura para cobrir toda a tela */
