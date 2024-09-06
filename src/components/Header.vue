@@ -61,13 +61,13 @@
         //     prependIcon: 'mdi-pot-mix',
         //   },
         // },
-        // {
-        //   title: 'Utensílios',
-        //   value: 'utensils',
-        //   props: {
-        //     prependIcon: 'mdi-archive',
-        //   },
-        // },
+        {
+          title: 'Utensílios',
+          value: 'utensils',
+          props: {
+            prependIcon: 'mdi-archive',
+          },
+        },
       ],
     }),
   }

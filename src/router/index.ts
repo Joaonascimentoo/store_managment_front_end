@@ -25,6 +25,11 @@ const router = createRouter({
           name: 'ingredients',
           component: () => import('@/pages/ingredients.vue'),
         },
+        {
+          path: '/utensils',
+          name: 'utensils',
+          component: () => import('@/pages/utensils.vue'),
+        },
       ],
     },
   ],

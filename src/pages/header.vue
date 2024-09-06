@@ -5,7 +5,7 @@
 </template>
 <style scoped>
 .background {
-  background-image: url("@/assets/background.jpg");
+  background-color: #2b2b2b;
   background-size: cover;
   background-position: center;
   height: 100vh; /* Define a altura para cobrir toda a tela */

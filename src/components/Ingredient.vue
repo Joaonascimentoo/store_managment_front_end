@@ -20,13 +20,13 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.name" label="Nome" />
+                      <v-text-field v-model="ingredientItem.name" label="Nome" />
                     </v-col>
                     <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.value" label="Valor" />
+                      <v-text-field v-model="ingredientItem.value" label="Valor" @input="maskMoney($event)" />
                     </v-col>
                     <v-col cols="12" md="6">
-                      <v-text-field v-model="editedItem.measure" label="G/Ml" />
+                      <v-text-field v-model="ingredientItem.measure" label="G/Ml" prefix="G/Ml" />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -74,13 +74,10 @@
 </template>
 
 <script lang="ts" setup>
-  function getCurrentDate () {
-    const date = new Date()
-    const day = String(date.getDate()).padStart(2, '0')
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const year = date.getFullYear()
-
-    return `${day}/${month}/${year}`
+  interface Ingredient {
+    name: string,
+    value: Number,
+    measure: Number,
   }
   const dialog = ref(false)
   const dialogDelete = ref(false)
@@ -88,20 +85,19 @@
     { title: 'Nome', key: 'name' },
     { title: 'Valor', key: 'value' },
     { title: 'Medida G/ML', key: 'measure' },
+    { title: 'Ações', key: 'actions', sortable: false },
   ]
-  const ingredients = ref<any[]>([])
-  const editedIndex = ref<number>(-1)
+  const ingredients = ref<Ingredient[]>([])
+  const ingredientItemIndex = ref<number>(-1)
 
-  const defaultItem = {
+  const defaultIngredientItem:Ingredient = {
     name: '',
-    day: getCurrentDate(),
     value: 0,
-    entries: 0,
-    exits: 0,
+    measure: 0,
   }
-  const editedItem = ref<any>({ ...defaultItem })
+  const ingredientItem = ref<Ingredient>({ ...defaultIngredientItem })
 
-  const formTitle = computed(() => (editedIndex.value === -1 ? 'Novo Item' : 'Editar Item'))
+  const formTitle = computed(() => (ingredientItemIndex.value === -1 ? 'Novo Ingrediente' : 'Editar Ingrediente'))
 
   watch(dialog, val => {
     if (!val) close()
@@ -115,44 +111,61 @@
     initialize()
   })
 
-  function editItem (item:any) {
-    editedIndex.value = ingredients.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
+  const maskMoney = (event:any) => {
+    const onlyDigits = event.target.value
+      .split('')
+      .filter((s: string) => /\d/.test(s))
+      .join('')
+      .padStart(3, '0')
+    const digitsFloat = onlyDigits.slice(0, -2) + '.' + onlyDigits.slice(-2)
+    event.target.value = maskCurrency(digitsFloat)
+  }
+
+  const maskCurrency = (valor:any, locale = 'pt-BR', currency = 'BRL') => {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+    }).format(valor)
+  }
+
+  function editItem (item:Ingredient) {
+    ingredientItemIndex.value = ingredients.value.indexOf(item)
+    ingredientItem.value = Object.assign({}, item)
     dialog.value = true
   }
 
-  function deleteItem (item:any) {
-    editedIndex.value = ingredients.value.indexOf(item)
-    editedItem.value = Object.assign({}, item)
+  function deleteItem (item:Ingredient) {
+    ingredientItemIndex.value = ingredients.value.indexOf(item)
+    ingredientItem.value = Object.assign({}, item)
     dialogDelete.value = true
   }
 
   function deleteItemConfirm () {
-    ingredients.value.splice(editedIndex.value, 1)
+    ingredients.value.splice(ingredientItemIndex.value, 1)
     closeDelete()
   }
 
   function close () {
     dialog.value = false
     nextTick(() => {
-      editedItem.value = Object.assign({}, defaultItem)
-      editedIndex.value = -1
+      ingredientItem.value = Object.assign({}, defaultIngredientItem)
+      ingredientItemIndex.value = -1
     })
   }
 
   function closeDelete () {
     dialogDelete.value = false
     nextTick(() => {
-      editedItem.value = Object.assign({}, defaultItem)
-      editedIndex.value = -1
+      ingredientItem.value = Object.assign({}, defaultIngredientItem)
+      ingredientItemIndex.value = -1
     })
   }
 
   function save () {
-    if (editedIndex.value > -1) {
-      Object.assign(ingredients.value[editedIndex.value], editedItem.value)
+    if (ingredientItemIndex.value > -1) {
+      Object.assign(ingredients.value[ingredientItemIndex.value], ingredientItem.value)
     } else {
-      ingredients.value.push(editedItem.value)
+      ingredients.value.push(ingredientItem.value)
     }
     close()
   }
@@ -161,7 +174,7 @@
     ingredients.value = [
       {
         name: 'Leite Condensado',
-        value: 10.0,
+        value: 10.00,
         measure: 395,
       },
     ]
