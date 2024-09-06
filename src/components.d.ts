@@ -14,5 +14,6 @@ declare module 'vue' {
     Ingredient: typeof import('./components/Ingredient.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Utensil: typeof import('./components/Utensil.vue')['default']
   }
 }
